@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Interactive Resume</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif;}
+
+    body {
+      background: linear-gradient(120deg, #1f1c2c, #928DAB);
+      color: #f0f0f0;
+      line-height: 1.6;
+      scroll-behavior: smooth;
+    }
+
+    /* Navigation fixed */
+    header {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      padding: 15px 40px;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #43cea2, #185a9d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    nav ul {display:flex; list-style:none; flex-wrap: wrap;}
+    nav ul li {margin: 0 10px;}
+    nav ul li a {
+      color:#fff;
+      text-decoration:none;
+      font-weight:500;
+      font-size:16px;
+      transition:0.3s;
+    }
+    nav ul li a:hover {
+      color:#43cea2;
+      text-shadow:0 0 8px #43cea2;
+    }
+
+    /* Banner */
+    .banner {
+      min-height: 80vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 120px 20px 40px;
+    }
+
+    .banner-content {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 30px;
+      max-width: 1100px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    .banner-photo img {
+      width: 280px;
+      height: 280px;
+      border-radius: 100%;
+      object-fit: cover;
+      border: 4px solid #43cea2;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+
+    .banner-text {flex:1;}
+    .banner-text h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #43cea2, #185a9d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .banner-text h3 {font-size: 20px; margin-bottom: 15px; color: #f5f5f5;}
+    .banner-text h6 {font-size: 16px; font-weight: 300; color: #ddd; max-width: 600px;}
+
+    /* Sections */
+    section {padding: 60px 20px;}
+    section h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 28px;
+      background: linear-gradient(90deg, #43cea2, #185a9d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    .card img {
+      width: 90%;
+      height: 170px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border: 2px solid #101010;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      transition: transform 0.3s;
+    }
+    .card img:hover {transform: scale(1.05);}
+
+    /* Thumbnails inside Experience */
+    .thumbnail-container {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 10px 0;
+    }
+    .experience-thumbnail {
+      width: 30px;
+      height: 30px;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 2px solid #0c0c0c;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .experience-thumbnail:hover {
+      transform: scale(1.15);
+      border-color: #0e0f0f;
+    }
+
+    /* Modal (popup for thumbnails) */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      padding-top: 80px;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+    }
+    .modal-content {
+      display: block;
+      margin: auto;
+      max-width: 80%;
+      max-height: 80vh;
+      border-radius: 10px;
+    }
+    .close {
+      position: absolute;
+      top: 30px; right: 50px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .contact {text-align: center;}
+    .contact p {margin: 8px 0; font-size:16px;}
+
+    footer {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ddd;
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media(max-width: 768px) {
+      header {padding: 10px 20px;}
+      .banner-photo img {width: 200px; height: 200px;}
+      .banner-text h1 {font-size: 28px;}
+      .banner-text h3 {font-size: 16px;}
+    }
+    @media(max-width: 480px) {
+      nav ul {flex-direction: column; align-items: center;}
+      nav ul li {margin: 6px 0;}
+      .banner-content {flex-direction: column; text-align: center;}
+    }
+  </style>
+
+  <script>
+    function openModal(img) {
+      document.getElementById("imgModal").style.display = "block";
+      document.getElementById("modalImg").src = img.src;
+    }
+    function closeModal() {
+      document.getElementById("imgModal").style.display = "none";
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <h1>My Resume</h1>
+    <nav>
+      <ul>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#certifications">Certifications</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Banner Section -->
+  <div class="banner">
+    <div class="banner-content">
+      <div class="banner-photo">
+        <img src="m1.jpg" alt="My Photo">
+      </div>
+      <div class="banner-text">
+        <h1>Hello, I'm Janhavi Marathe</h1>
+        <h7>B.Tech Information Technology(2nd year Pursuing)</h7><br>
+        <h3>Web Developer | Java | Python | Android | DBMS | Computer Network</h3><br>
+        <p style="font-size: 12px;"> <strong>Permanent Address:</strong>📍 Chalisgaon (424101), Dist. Jalgaon</p>
+        <p style="font-size: 12px;"><strong>Current Address:</strong>📍 Shirpur (425405), Dist. Dhule</p>
+        <h6>Hi there! 👋 I hope you’re doing great. I’m an aspiring IT Engineer passionate about building
+          smart solutions, exploring new technologies, and creating things that make life easier and better by Technology.</h6>
+      </div>
+    </div>
+  </div>
+
+  <!-- Education -->
+  <section id="education">
+    <h2>Education</h2>
+    <div class="card-container">
+      <div class="card">
+        <h3>B.Tech in Information Technology</h3>
+        <p>R C Patel Institute of Technology, Shirpur (2025 - 2028)</p>
+        <p>CGPA: Pursuing</p>
+      </div>
+      <div class="card">
+        <h3>Diploma in Information Technology</h3>
+        <p>Government Polytechnic, Jalgaon (2022 - 2025)</p>
+        <p>Percentage: 87.94%</p>
+      </div>
+      <div class="card">
+        <h3>SSC</h3>
+        <p>Dr. Kakasaheb Purnapatre Madhyamik Vidyalaya, Chalisgaon (2016 - 2022)</p>
+        <p>Percentage: 92.20%</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Work Experience -->
+  <section id="experience">
+    <h2>Work Experience</h2>
+    <div class="card-container">
+      <div class="card">
+        <h3>Intern - Python Programming</h3>
+        <p>Company: CodeAlpha</p>
+        <div class="thumbnail-container">
+          <img src="codealpha.png" alt="Sumago Certificate" class="experience-thumbnail" onclick="openModal(this)">
+        </div>
+        <p>Pursuing 1-month Python Internship at Code Alpha (Online Mode), focusing on Python fundamentals 
+        and practical projects. Working on assignments and mini projects that improve coding skills and logical thinking.</p>
+      </div>
+      <div class="card">
+        <h3>Trainee - Full Stack in Java</h3>
+        <p>Company: Sumago Infotech, Nashik (Jun 2024 - Jul 2024)</p>
+        <div class="thumbnail-container">
+          <img src="sumago.jpg" alt="Sumago Certificate" class="experience-thumbnail" onclick="openModal(this)">
+          <img src="Award.jpg" alt="Award" class="experience-thumbnail" onclick="openModal(this)">
+        </div>
+        <p>Completed 6-week Industrial Training in Full Stack Java at Sumago, Nashik. Gained hands-on 
+        experience in Java, database integration, and web development. Recognized as Best Performer and awarded by Curious Katalysts. 
+        Worked on an Online Airline Ticket Booking System and led a project team.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popup Modal -->
+  <div id="imgModal" class="modal" onclick="closeModal()">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="modalImg">
+  </div>
+
+  <!-- Certifications -->
+  <section id="certifications">
+    <h2>Certifications</h2>
+    <div class="card-container">
+      <div class="card"><img src="It.png"><h3>Maha IT Genius Test</h3><p>MKCL</p></div>
+      <div class="card"><img src="c Quiz.png"><h3>Quiz Competition</h3><p>Govt Polytechnic, Jalgaon</p></div>
+      <div class="card"><img src="cpp.png"><h3>C++</h3><p>VJ Tech Academy, Pune</p></div>
+      <div class="card"><img src="dsu.png"><h3>Data Structures</h3><p>VJ Tech Academy, Pune</p></div>
+      <div class="card"><img src="IIT.png"><h3>Placement Prep Program</h3><p>IIT Mumbai</p></div>
+      <div class="card"><img src="java.png"><h3>Java</h3><p>VJ Tech Academy, Pune</p></div>
+      <div class="card"><img src="advance java.png"><h3>Advance Java</h3><p>VJ Tech Academy, Pune</p></div>
+      <div class="card"><img src="poster presentation 23.png"><h3>Poster Presentation</h3><p>Govt Polytechnic, Jalgaon</p></div>
+      <div class="card"><img src="solapur.png"><h3>Online State Level Quiz</h3><p>Govt Polytechnic, Solapur</p></div>
+      <div class="card"><img src="java script.png"><h3>JavaScript</h3><p>VJ Tech Academy, Pune</p></div>
+      <div class="card"><img src="php.png"><h3>PHP</h3><p>VJ Tech Academy, Pune</p></div>
+      <div class="card"><img src="met (1).png"><h3>Online Environment Quiz</h3><p>MET Bhujbal Knowledge City</p></div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <h2>Skills</h2>
+    <div class="card-container">
+      <div class="card"><h3>HTML, CSS,JavaScript,PHP</h3></div>
+      <div class="card"><h3>C, C++, Java, Python, Android</h3></div>
+      <div class="card"><h3>DBMS,Django</h3></div>
+      <div class="card"><h3>Computer Network, Data Communication</h3></div>
+      <div class="card"><h3>Group Leading, Presentation, Communication</h3></div>
+    </div>
+  </section>
+<h1 style="text-align: center;">For More Details Contact With Me,I will Happy to connect with you!😀</h1>
+  <!-- Contact -->
+  <section id="contact">
+    <h2>Contact Me</h2>
+    <div class="contact">
+         <p> 📞 Phone: +91 8766036065</p>
+      <p>📩 Email: janhavimarathe70@gmail.com</p>
+      <p>🔗 Instragram: <a href="https://www.instagram.com/janhavi_marathe26?igsh=MTYyazcwOG96MTZ5cA==">Visit Profile</a></p>
+      <p>🔗 LinkedIn: <a href="http://www.linkedin.com/in/janhavi-marathe-900223380">Visit Profile</a></p>
+      <p>🔗 GitHub:<a href="https://github.com/janhavimarathe70-hash">Visit Profile</a></p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>My Resume | Designed by janhavi marathe</p>
+  </footer>
+
+</body>
+</html>
